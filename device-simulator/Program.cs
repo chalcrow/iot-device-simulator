@@ -22,9 +22,9 @@ namespace AzureIoT.BuildingDevice
         static Random random = new Random();
 
         //building sensor details
-        const double maximumOccupancy_min = 0;
-        const double maximumOccupancy_max = 100;
-        static double maximumOccupancy = 3;
+        const int seatingCapacity_min = 0;
+        const int seatingCapacity_max = 100;
+        static int seatingCapacity = 9;
 
         static void Main(string[] args)
         {
@@ -49,17 +49,17 @@ namespace AzureIoT.BuildingDevice
         {
             while (!token.IsCancellationRequested)
             {
-                maximumOccupancy = GenerateSensorReading(maximumOccupancy, maximumOccupancy_min, maximumOccupancy_max);
+                seatingCapacity = GenerateSensorReading(seatingCapacity, seatingCapacity_min, seatingCapacity_max);
 
-                var json = CreateJSON(maximumOccupancy);
+                var json = CreateJSON(seatingCapacity);
                 var message = CreateMessage(json);
                 await buildingDeviceClient.SendEventAsync(message);
                 Console.WriteLine($"Sending message at {DateTime.Now} and Message : {json}");
-                await Task.Delay(5000);
+                await Task.Delay(30000);
             }
         }
 
-        private static double GenerateSensorReading(double currentValue, double min, double max)
+        private static int GenerateSensorReading(int currentValue, int min, int max)
         {
             //double percentage = 5; // 5%
 
@@ -76,7 +76,7 @@ namespace AzureIoT.BuildingDevice
             return currentValue;
         }
 
-        private static string CreateJSON(double occupancyData)
+        private static string CreateJSON(int seatingCapacityData)
         {
             var workspacesData = new List<object>();
 
@@ -85,7 +85,7 @@ namespace AzureIoT.BuildingDevice
                 buildingName = "242-exhibition-melb",
                 levelName = "Level-9",
                 id = "W.9.027",
-                maximumOccupancy = occupancyData
+                seatingCapacity = seatingCapacityData
             };
 
             workspacesData.Add(buildingdata);
